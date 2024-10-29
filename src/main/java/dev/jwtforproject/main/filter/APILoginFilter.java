@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,10 +18,13 @@ import java.util.Map;
 @Slf4j
 public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
 
+    //AbstractAuthenticationProcessingFilter에게 url 설정
+    //위 클래스는 인증 관련 요청을 처리하는 역할
     public APILoginFilter(String defaultFilterProcessesUrl) {
         super(defaultFilterProcessesUrl);
     }
 
+    //인증 시도할때 하는 메소드
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
 
@@ -37,7 +39,7 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
 
         Map<String, String> jsonData = parseRequestJSON(request);
 
-        log.info("jsonData: "+jsonData);
+        log.info("jsonData: " + jsonData);
 
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(
@@ -48,16 +50,16 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
     }
 
 
-    private Map<String,String> parseRequestJSON(HttpServletRequest request) {
+    private Map<String, String> parseRequestJSON(HttpServletRequest request) {
 
         //JSON 데이터를 분석해서 mid, mpw 전달 값을 Map으로 처리
-        try(Reader reader = new InputStreamReader(request.getInputStream())){
+        try (Reader reader = new InputStreamReader(request.getInputStream())) {
 
             Gson gson = new Gson();
 
             return gson.fromJson(reader, Map.class);
 
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
         return null;

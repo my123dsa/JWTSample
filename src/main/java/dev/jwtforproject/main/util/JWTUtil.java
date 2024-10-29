@@ -3,7 +3,6 @@ package dev.jwtforproject.main.util;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,14 +20,14 @@ public class JWTUtil {
     @Value("${org.zerock.jwt.secret}")
     private String key;
 
-    public String generateToken(Map<String, Object> valueMap, int days){
+    public String generateToken(Map<String, Object> valueMap, int days) {
 
         log.info("generateKey..." + key);
 
         //헤더 부분
         Map<String, Object> headers = new HashMap<>();
-        headers.put("typ","JWT");
-        headers.put("alg","HS256");
+        headers.put("typ", "JWT");
+        headers.put("alg", "HS256");
 
         //payload 부분 설정
         Map<String, Object> payloads = new HashMap<>();
@@ -38,7 +37,7 @@ public class JWTUtil {
         //int time = (1) * days; //테스트는 분단위로 나중에 60*24 (일)단위변경
 
         //10분 단위로 조정
-        int time = 60*24* days; //테스트는 분단위로 나중에 60*24 (일)단위변경
+        int time = 60 * 24 * days; //테스트는 분단위로 나중에 60*24 (일)단위변경
 
         ZonedDateTime nowUtc = ZonedDateTime.now(ZoneId.of("UTC"));
         Date issuedAt = Date.from(nowUtc.toInstant());
@@ -58,7 +57,7 @@ public class JWTUtil {
     }
 
 
-    public Map<String, Object> validateToken(String token)throws JwtException {
+    public Map<String, Object> validateToken(String token) throws JwtException {
 
         Map<String, Object> claim = null;
 

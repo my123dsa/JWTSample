@@ -7,9 +7,7 @@ import dev.jwtforproject.main.filter.TokenCheckFilter;
 import dev.jwtforproject.main.handler.APILoginSuccessHandler;
 import dev.jwtforproject.main.service.APIUserDetailsService;
 import dev.jwtforproject.main.util.JWTUtil;
-import dev.jwtforproject.main.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,12 +24,12 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
 import java.util.Arrays;
 
 @Configuration
 @Slf4j
 @EnableMethodSecurity
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class CustomSecurityConfig {
 
@@ -39,21 +38,26 @@ public class CustomSecurityConfig {
     private final APIUserDetailsService apiUserDetailsService;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http)throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         log.info("-----------------------configuration---------------------");
 
         //AuthenticationManager설정
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+
+
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);//사용자 인증을 위한 다양한 설정을 지원
         authenticationManagerBuilder.userDetailsService(apiUserDetailsService).passwordEncoder(passwordEncoder());
-        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
-        http.authenticationManager(authenticationManager);
+        //사용자 정보를 제공하는 서비스와 인코딩 이걸로
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();//만들고
+        http.authenticationManager(authenticationManager);// 넣음
 
 
         //APILoginFilter
-        APILoginFilter apiLoginFilter = new APILoginFilter("/generateToken");
+        APILoginFilter apiLoginFilter = new APILoginFilter("/login");
         apiLoginFilter.setAuthenticationManager(authenticationManager);
-        APILoginSuccessHandler successHandler = new APILoginSuccessHandler(jwtUtil);
+        APILoginSuccessHandler successHandler = new APILoginSuccessHandler(jwtUtil);// 인증 성공시 APILoginSuccessHandler로
+        // jwt생성
         apiLoginFilter.setAuthenticationSuccessHandler(successHandler);
 
 
@@ -70,21 +74,13 @@ public class CustomSecurityConfig {
 
 //                .exceptionHandling(ex->ex)
 //                .logout(logout->logout)
-//                .login(login-> login)
         ;
 
         return http.build();
     }
 
-//        //APILoginFilter의 위치 조정
-//        http.addFilterBefore(apiLoginFilter, UsernamePasswordAuthenticationFilter.class);
-//        //api로 시작하는 모든 경로는 TokenCheckFilter 동작
-//        http.addFilterBefore(tokenCheckFilter(jwtUtil, apiUserDetailsService), UsernamePasswordAuthenticationFilter.class);
-//        //refreshToken 호출 처리
-//        http.addFilterBefore(new RefreshTokenFilter("/refreshToken", jwtUtil), TokenCheckFilter.class);
 
-    private TokenCheckFilter tokenCheckFilter(JWTUtil jwtUtil, APIUserDetailsService
-            apiUserDetailsService){
+    private TokenCheckFilter tokenCheckFilter(JWTUtil jwtUtil, APIUserDetailsService apiUserDetailsService) {
         return new TokenCheckFilter(apiUserDetailsService, jwtUtil);
     }
 
@@ -108,5 +104,6 @@ public class CustomSecurityConfig {
 
         return source;
     }
+
 
 }

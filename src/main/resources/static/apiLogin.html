@@ -15,7 +15,7 @@
 
         const data = {email:"test1@email.com", mpw:"1111"}
 
-        axios.post("http://localhost:8080/generateToken", data).then(res => {
+        axios.post("http://localhost:8080/login", data).then(res => {
             const accessToken = res.data.accessToken
             const refreshToken = res.data.refreshToken
 

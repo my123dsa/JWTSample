@@ -11,10 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,13 +23,15 @@ import java.util.Map;
 
 @Log4j2
 @RequiredArgsConstructor
-public class RefreshTokenFilter  extends OncePerRequestFilter {
+public class RefreshTokenFilter extends OncePerRequestFilter {
 
     private final String refreshPath;
 
     private final JWTUtil jwtUtil;
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getRequestURI();
 
@@ -52,9 +52,9 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
         log.info("accessToken: " + accessToken);
         log.info("refreshToken: " + refreshToken);
 
-        try{
+        try {
             checkAccessToken(accessToken);
-        }catch(RefreshTokenException refreshTokenException){
+        } catch (RefreshTokenException refreshTokenException) {
             refreshTokenException.sendResponseError(response);
             return;
         }
@@ -66,13 +66,13 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
             refreshClaims = checkRefreshToken(refreshToken);
             log.info(refreshClaims);
 
-        }catch(RefreshTokenException refreshTokenException){
+        } catch (RefreshTokenException refreshTokenException) {
             refreshTokenException.sendResponseError(response);
             return;
         }
 
         //Refresh Token의 유효시간이 얼마 남지 않은 경우
-        Integer exp = (Integer)refreshClaims.get("exp");
+        Integer exp = (Integer) refreshClaims.get("exp");
 
         Date expTime = new Date(Instant.ofEpochMilli(exp).toEpochMilli() * 1000);
 
@@ -85,18 +85,18 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
         log.info("-----------------------------------------");
         log.info("current: " + current);
         log.info("expTime: " + expTime);
-        log.info("gap: " + gapTime );
+        log.info("gap: " + gapTime);
 
-        String email = (String)refreshClaims.get("email");
-        log.info("email: "+email);
+        String email = (String) refreshClaims.get("email");
+        log.info("email: " + email);
 
         //이상태까지 오면 무조건 AccessToken은 새로 생성
         String accessTokenValue = jwtUtil.generateToken(Map.of("email", email), 1);
 
         String refreshTokenValue = tokens.get("refreshToken");
-        log.info("refreshTokenValue: "+refreshTokenValue);
+        log.info("refreshTokenValue: " + refreshTokenValue);
         //RefrshToken이 3일도 안남았다면..
-        if(gapTime < (1000 * 60  * 60  ) ){
+        if (gapTime < (1000 * 60 * 60)) {
             //if(gapTime < (1000 * 60 * 60 * 24 * 3  ) ){
             log.info("new Refresh Token required...  ");
             refreshTokenValue = jwtUtil.generateToken(Map.of("email", email), 30);
@@ -110,42 +110,42 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
 
     }
 
-    private Map<String,String> parseRequestJSON(HttpServletRequest request) {
+    private Map<String, String> parseRequestJSON(HttpServletRequest request) {
 
         //JSON 데이터를 분석해서 mid, mpw 전달 값을 Map으로 처리
-        try(Reader reader = new InputStreamReader(request.getInputStream())){
+        try (Reader reader = new InputStreamReader(request.getInputStream())) {
 
             Gson gson = new Gson();
 
             return gson.fromJson(reader, Map.class);
 
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
         return null;
     }
 
-    private void checkAccessToken(String accessToken)throws RefreshTokenException {
+    private void checkAccessToken(String accessToken) throws RefreshTokenException {
 
-        try{
+        try {
             jwtUtil.validateToken(accessToken);
-        }catch (ExpiredJwtException expiredJwtException){
+        } catch (ExpiredJwtException expiredJwtException) {
             log.info("Access Token has expired");
-        }catch(Exception exception){
+        } catch (Exception exception) {
             throw new RefreshTokenException(RefreshTokenException.ErrorCase.NO_ACCESS);
         }
     }
 
-    private Map<String, Object> checkRefreshToken(String refreshToken)throws RefreshTokenException{
+    private Map<String, Object> checkRefreshToken(String refreshToken) throws RefreshTokenException {
 
         try {
             Map<String, Object> values = jwtUtil.validateToken(refreshToken);
 
             return values;
 
-        }catch(ExpiredJwtException expiredJwtException){
+        } catch (ExpiredJwtException expiredJwtException) {
             throw new RefreshTokenException(RefreshTokenException.ErrorCase.OLD_REFRESH);
-        }catch(Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
             new RefreshTokenException(RefreshTokenException.ErrorCase.NO_REFRESH);
         }

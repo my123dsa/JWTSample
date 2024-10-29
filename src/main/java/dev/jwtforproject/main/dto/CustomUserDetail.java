@@ -21,7 +21,7 @@ public class CustomUserDetail implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public static CustomUserDetail of(Long id, String email,String password, List<SimpleGrantedAuthority> roles) {
+    public static CustomUserDetail of(Long id, String email, String password, List<SimpleGrantedAuthority> roles) {
         return CustomUserDetail.builder()
                 .id(id)
                 .email(email)

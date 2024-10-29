@@ -20,7 +20,7 @@ public class APIUser {
     private String mpw;
     private String email;
 
-    public void changePw(String mpw){
+    public void changePw(String mpw) {
         this.mpw = mpw;
     }
 }

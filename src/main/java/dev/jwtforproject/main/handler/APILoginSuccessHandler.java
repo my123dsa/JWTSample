@@ -7,11 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
 
 import java.io.IOException;
 import java.util.Map;
@@ -23,7 +21,8 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
     private final JWTUtil jwtUtil;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
 
         log.info("Login Success Handler................................");
 
@@ -41,7 +40,7 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
 
         Gson gson = new Gson();
 
-        Map<String,String> keyMap = Map.of(
+        Map<String, String> keyMap = Map.of(
                 "accessToken", accessToken,
                 "refreshToken", refreshToken);
 
