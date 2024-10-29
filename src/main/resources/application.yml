@@ -23,8 +23,8 @@ logging:
     org:
       springframework: info
       zerock: debug
-#      springframework.security: trace
-      springframework.security: INFO
+      springframework.security: trace
+#      springframework.security: INFO
 
 
 org:

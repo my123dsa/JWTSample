@@ -2,6 +2,7 @@ package dev.jwtforproject.main.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
@@ -14,7 +15,8 @@ import lombok.*;
 public class APIUser {
 
     @Id
-    private String mid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String mpw;
     private String email;
 

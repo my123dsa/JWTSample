@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +23,7 @@ import java.io.IOException;
 import java.util.Map;
 
 
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class TokenCheckFilter extends OncePerRequestFilter {
 
@@ -52,18 +53,15 @@ public class TokenCheckFilter extends OncePerRequestFilter {
             Map<String, Object> payload = validateAccessToken(request);
 
             //mid
-            String mid = (String)payload.get("mid");
+            String email = (String)payload.get("email");
 
-            log.info("mid: " + mid);
+            log.info("email: " + email);
             // 이거 커스텀으로
-            CustomUserDetail userDetail= apiUserDetailsService.loadUserByUsername(mid);
-
-//            UserDetails userDetails = apiUserDetailsService.loadUserByUsername(mid);
+            CustomUserDetail customUserDetail= apiUserDetailsService.loadUserByUsername(email);
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            userDetail, null, userDetail.getAuthorities());
-
+                            customUserDetail, null, customUserDetail.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

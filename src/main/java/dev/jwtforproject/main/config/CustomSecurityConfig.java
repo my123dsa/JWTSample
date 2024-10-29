@@ -10,6 +10,7 @@ import dev.jwtforproject.main.util.JWTUtil;
 import dev.jwtforproject.main.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +29,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
-@Log4j2
+@Slf4j
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class CustomSecurityConfig {

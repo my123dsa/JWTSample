@@ -3,6 +3,7 @@ package dev.jwtforproject.main.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,16 +13,17 @@ import java.util.List;
 
 @Getter
 @Builder
+@ToString
 public class CustomUserDetail implements UserDetails {
 
-    private final String mid;
+    private final Long id;
     private final String email;
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public static CustomUserDetail of(String mid, String email,String password, List<SimpleGrantedAuthority> roles) {
+    public static CustomUserDetail of(Long id, String email,String password, List<SimpleGrantedAuthority> roles) {
         return CustomUserDetail.builder()
-                .mid(mid)
+                .id(id)
                 .email(email)
                 .password(password)
                 .authorities(roles)
@@ -40,7 +42,11 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public String getUsername() {
-        return mid;
+        return email;
+    }
+
+    public Long getUserDetailId() {
+        return id;
     }
 
     @Override

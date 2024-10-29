@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -86,18 +87,19 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
         log.info("expTime: " + expTime);
         log.info("gap: " + gapTime );
 
-        String mid = (String)refreshClaims.get("mid");
+        String email = (String)refreshClaims.get("email");
+        log.info("email: "+email);
 
         //이상태까지 오면 무조건 AccessToken은 새로 생성
-        String accessTokenValue = jwtUtil.generateToken(Map.of("mid", mid), 1);
+        String accessTokenValue = jwtUtil.generateToken(Map.of("email", email), 1);
 
         String refreshTokenValue = tokens.get("refreshToken");
-
+        log.info("refreshTokenValue: "+refreshTokenValue);
         //RefrshToken이 3일도 안남았다면..
         if(gapTime < (1000 * 60  * 60  ) ){
             //if(gapTime < (1000 * 60 * 60 * 24 * 3  ) ){
             log.info("new Refresh Token required...  ");
-            refreshTokenValue = jwtUtil.generateToken(Map.of("mid", mid), 30);
+            refreshTokenValue = jwtUtil.generateToken(Map.of("email", email), 30);
         }
 
         log.info("Refresh Token result....................");
@@ -105,7 +107,6 @@ public class RefreshTokenFilter  extends OncePerRequestFilter {
         log.info("refreshToken: " + refreshTokenValue);
 
         sendTokens(accessTokenValue, refreshTokenValue, response);
-
 
     }
 

@@ -4,6 +4,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 
 
 @Component
-@Log4j2
+@Slf4j
 public class JWTUtil {
     @Value("${org.zerock.jwt.secret}")
     private String key;
@@ -44,6 +45,7 @@ public class JWTUtil {
         Date expiration = Date.from(nowUtc.plusMinutes(time).toInstant());
         System.out.println("expiration = " + expiration);
         System.out.println("issuedAt = " + issuedAt);
+
         String jwtStr = Jwts.builder()
                 .setHeader(headers)
                 .setClaims(payloads)

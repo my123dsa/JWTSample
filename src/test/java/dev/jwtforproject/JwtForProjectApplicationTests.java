@@ -19,17 +19,20 @@ class JwtForProjectApplicationTests {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Test
     @Transactional // 트랜잭션이 테스트 내에서 적용됨
     @Commit
     void contextLoads() {
+        Long userId = 1L;
         for (int i=0;i<10;i++){
             APIUser apiUser = APIUser.builder()
-                    .mid(String.valueOf(i))
-                    .email("test@email.com")
+                    .id(userId)
+                    .email("test" + i+ "@email.com")
                     .mpw(passwordEncoder.encode("1111"))
                     .build();
             apiUserRepository.save(apiUser);
+            userId +=1L;
         }
 
     }

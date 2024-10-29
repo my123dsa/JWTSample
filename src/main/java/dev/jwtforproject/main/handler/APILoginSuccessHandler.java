@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -14,7 +15,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import java.io.IOException;
 import java.util.Map;
-
 
 @Log4j2
 @RequiredArgsConstructor
@@ -29,10 +29,11 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        log.info(authentication);
+        log.info(String.valueOf(authentication));
         log.info(authentication.getName()); //username
 
-        Map<String, Object> claim = Map.of("mid", authentication.getName());
+        Map<String, Object> claim = Map.of("email", authentication.getName());
+        log.info("email" + authentication.getName());
         //Access Token 유효기간 1일
         String accessToken = jwtUtil.generateToken(claim, 1);
         //Refresh Token 유효기간 30일
