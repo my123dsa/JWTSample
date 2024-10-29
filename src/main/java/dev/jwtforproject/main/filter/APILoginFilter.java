@@ -44,7 +44,7 @@ public class APILoginFilter extends AbstractAuthenticationProcessingFilter {
         UsernamePasswordAuthenticationToken authenticationToken
                 = new UsernamePasswordAuthenticationToken(
                 jsonData.get("email"),
-                jsonData.get("mpw"));
+                jsonData.get("password"));
 
         return getAuthenticationManager().authenticate(authenticationToken);
     }

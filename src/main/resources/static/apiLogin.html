@@ -13,7 +13,7 @@
 
     document.querySelector(".btn1").addEventListener("click",()=> {
 
-        const data = {email:"test1@email.com", mpw:"1111"}
+        const data = {email:"test1@email.com", password:"1111"}
 
         axios.post("http://localhost:8080/login", data).then(res => {
             const accessToken = res.data.accessToken

@@ -29,7 +29,7 @@ class JwtForProjectApplicationTests {
             APIUser apiUser = APIUser.builder()
                     .id(userId)
                     .email("test" + i+ "@email.com")
-                    .mpw(passwordEncoder.encode("1111"))
+                    .password(passwordEncoder.encode("1111"))
                     .build();
             apiUserRepository.save(apiUser);
             userId +=1L;

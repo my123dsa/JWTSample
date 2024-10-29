@@ -17,10 +17,11 @@ public class APIUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String mpw;
+    private String password;
     private String email;
 
-    public void changePw(String mpw) {
-        this.mpw = mpw;
+
+    public void changePassword(String password) {
+        this.password = password;
     }
 }

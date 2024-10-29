@@ -36,7 +36,7 @@ public class APIUserDetailsService implements UserDetailsService {
         roles.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         CustomUserDetail customUserDetail = CustomUserDetail.
-                of(apiUser.getId(), apiUser.getEmail(), apiUser.getMpw(), roles);
+                of(apiUser.getId(), apiUser.getEmail(), apiUser.getPassword(), roles);
         log.info(String.valueOf(customUserDetail));
         return customUserDetail;
     }
